@@ -195,10 +195,66 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
-      
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/status:
+    put:
+      tags:
+        - AllProcess_UpdateStatus
+      summary: Обновлени статуса
+      description: Обновление статуса по активной заявке
+      operationId: putApplicationById
+      parameters:
+        - name: Id
+          schema:
+            type: string
+          in: path
+          description: ID заявки
+          example: 0753cffe-00cb-42ee-a037-d228ab05340c
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/putApplicationById'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    putApplicationById:
+      description: Передача статсуса заявки
+      required:
+        - status
+      properties:
+        status:
+          description: Статус заявки
+          type: string
+          example: CREATED
+          enum:
+            - CREATED
+            - READY
+            - SIGNING
+            - EXECUTION
     SessionResponse:
       description: Ответ от сесионных данных
       type: object
