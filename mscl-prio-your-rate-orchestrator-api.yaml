@@ -1,0 +1,352 @@
+openapi: 3.0.3
+info:
+  title: Prio Your Rate API
+  description: API для команд от оркестратора СУБО КН:Льготы/Каникулы
+  version: 1.0.0
+servers:
+  - url: https://msclm.dk5-mssa01-mscl-prio-dev.apps.dk5-mssa01.corp.dev.vtb/api/command
+    description: Разработческий сервер DEV
+  - url: https://msclm.ss1-genr01-mscl-mgmt-if.apps.ss1-genr01.test.vtb.ru/api/command
+    description: Тестовый сервер IFT
+  - url: https://msclm.rs5-genr04-mscl-rr-general.apps.rs5-genr04.test.vtb.ru/api/command
+    description: Тестовый сервер PREPROD
+  - url: https://msclm.region.vtb.ru/api/command
+    description: Продуктивный сервер PROD
+tags:
+  - name: Process_PreparingFirstScreen
+    description: Команды для лэйн Process_PreparingFirstScreen
+    externalDocs:
+      description: change_me (sfera.inno.local - знания)
+      url: http://change_me
+  - name: Event
+paths:
+  /client/session/{sessionId}:
+    get:
+      tags:
+        - Process_PreparingFirstScreen
+      summary: Получить mdm id клиента
+      description: Получение mdmId клиента по id session
+      operationId: getBySessionId
+      parameters:
+        - name: sessionId
+          schema:
+            type: string
+            format: uuid
+          in: path
+          description: ID сессии
+          example: b74c2d3d-989b-43be-9fcf-6feae1d53222
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  /client/{mdmId}/loans:
+    get:
+      tags:
+        - Process_PreparingFirstScreen
+      summary: Получить договора клиента
+      description: Получение договора клиента по mdmId клиента
+      operationId: getLoansByMdmId
+      parameters:
+        - name: mdmId
+          schema:
+            type: string
+          in: path
+          description: MDM id клиента
+          example: 123123
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoansResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  /client/{mdmId}/loan/detail:
+    get:
+      tags:
+        - Process_PreparingFirstScreen
+      summary: Получить деальную информацию по договору клиента
+      description: Получение детальной информации по договору клиента
+      operationId: getDetailLoansByMdmIdAndPublicId
+      parameters:
+        - name: mdmId
+          schema:
+            type: string
+          in: path
+          description: MDM id клиента
+          example: 341243
+          required: true
+        - name: publicId
+          schema:
+            type: string
+          in: header
+          description: MDM id клиента
+          example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanDetailResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  /client/{mdmId}/applications/find:
+    get:
+      tags:
+        - Process_PreparingFirstScreen
+      summary: Поиск активных заявок по клиенту
+      description: Получение списка заявок
+      operationId: getApplicationsByMdmId
+      parameters:
+        - name: mdmId
+          schema:
+            type: string
+          in: path
+          description: MDM id клиента
+          example: 341243
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationByMdmIdResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'          
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+      
+components:
+  schemas:
+    SessionResponse:
+      description: Ответ от сесионных данных
+      type: object
+      required: 
+        - mdmId
+      properties:
+        mdmId:
+          description: Mdm Id клиента
+          type: string
+          example: 123123
+    LoansResponse:
+      type: object
+      description: Список договоров клиента
+      required: 
+       - mdmId
+      properties:
+        mdmId:
+          description: Mdm Id клиента
+          type: string
+          example: 123123
+        loans:
+          type: array
+          items:
+            $ref: '#/components/schemas/Loan'
+    Loan:
+      type: object
+      description: Данные по договору
+      required:
+        - contractNumber
+        - contractOpenDate
+        - yourRateStatus
+        - publicId
+      properties:
+        contractNumber:
+          description: Номер договора
+          type: string
+          example: V625/536-1234567
+        contractOpenDate:
+          description: Дата открытия договора
+          type: string
+          format: date
+          example: 2023-07-21
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        contractAmount:
+          type: integer
+          description: Первоначальная сумма кредита
+          example: 1500000
+        monthlyInstalment:
+          type: integer
+          description: Ежемесячный платеж
+          example: 13500
+        interestRate:
+          type: integer
+          description: Ставка по кредиту
+          example: 12
+        yourRateStatus:
+          description: Статус услуги Ваша низкая ставка
+          type: string
+          enum: 
+            - ACTIVE
+            - DISABLED
+            - SIGNING
+            - CONFIRMATION AWAITING
+          example: ACTIVE
+        publicId:
+          description: Уникальный идентификатор продукта
+          type: string
+          example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
+    LoanDetailResponse:
+      type: object
+      description: Данные по договору
+      required:
+        - publicId
+        - yourRateActivationDate
+        - yourRateCoolingPerionEndDate
+      properties:
+        publicId:
+          description: Уникальный идентификатор продукта
+          type: string
+          example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
+        yourRateActivationDate:
+          description: Дата активации услуги
+          type: string
+          format: date
+          example: 2023-07-21
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        yourRateCoolingPerionEndDate:
+          description: Дата завершения периода охлаждения 
+          type: string
+          format: date
+          example: 2023-08-21
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+        yourRateDiscountRate:
+          description: Процент скидки 
+          type: integer
+          example: 10.0
+        yourRateCost:
+          description: Стоимость услуги 
+          type: integer
+          example: 555444.33
+        yourRateRefundAmount:
+          description: Сумма возврата 
+          type: integer
+          example: 444333.22
+    ApplicationByMdmIdResponse:
+      type: array
+      description: Список найденных заявок
+      items:
+        $ref: '#/components/schemas/ApplicationByMdmId' 
+    ApplicationByMdmId:
+      type: object
+      required:
+        - contractNumber
+        - applicationId
+        - applicationStatus
+      properties:
+        applicationId:
+          description: UUID заявки
+          type: string
+          example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2001
+        contractNumber:
+          description: Номер договора
+          type: string
+          example: V625/536-1234567
+        applicationStatus:
+          description: Статус заявки
+          type: string
+          enum:
+            - CREATE
+            - DONE
+          example: DONE
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      required: 
+        - errorSourceSystem
+        - frontErrorMessage
+      properties:
+        errorSourceSystem:
+          description: Система-источник ошибки
+          type: string
+        frontErrorMessage:
+          description: Сообщение об ошибки для отображения на фронте          
+          type: string
+        originalErrorCode:
+          description: Код ошибки из системы-источника
+          type: string
+        originalErrorMessage:
+          description: Текст ошибки из системы-источника
+          type: string
+      description: Ошибка      
