@@ -72,12 +72,9 @@ paths:
       operationId: getLoansByMdmId
       parameters:
         - name: mdmId
-          schema:
-            type: string
           in: path
-          description: MDM id клиента
-          example: 123123
           required: true
+          $ref: '#/components/schemas/MdmId'
       responses:
         '200':
           description: Successful operation
@@ -114,12 +111,9 @@ paths:
       operationId: getDetailLoansByMdmIdAndPublicId
       parameters:
         - name: mdmId
-          schema:
-            type: string
           in: path
-          description: MDM id клиента
-          example: 341243
           required: true
+          $ref: '#/components/schemas/MdmId'
         - name: publicId
           schema:
             type: string
@@ -163,12 +157,9 @@ paths:
       operationId: getApplicationsByMdmId
       parameters:
         - name: mdmId
-          schema:
-            type: string
           in: path
-          description: MDM id клиента
-          example: 341243
           required: true
+          $ref: '#/components/schemas/MdmId'
       responses:
         '200':
           description: Successful operation
@@ -278,6 +269,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /application:
+    post:
+      tags:
+        - Process_MainProcess
+      summary: Создание заявки
+      description: Передаём с фронта в бэк массив объектов для создания заявок
+      operationId: postApplication
+      parameters:
+        - name: channelRef
+          in: headers
+          required: true
+          $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          in: headers
+          required: true
+          $ref: '#/components/schemas/EmployeeLogin'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateApplicationRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoansResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /application/{id}:
     delete:
       tags:
@@ -317,6 +356,19 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    CreateApplicationRequest:
+      title: CreateApplicationRequest
+      description: Тело запроса для создания заявки(ок)
+      type: object
+      properties:
+        mdmId:
+          $ref: '#/components/schemas/MdmId'
+        loans:
+          title: Loans
+          description: Массив договоров
+          type: array
+          items:
+            $ref: '#/components/schemas/Loan'
     putApplicationById:
       description: Передача статсуса заявки
       required:
@@ -331,9 +383,7 @@ components:
         - mdmId
       properties:
         mdmId:
-          description: Mdm Id клиента
-          type: string
-          example: 123123
+          $ref: '#/components/schemas/MdmId'
     LoansResponse:
       type: object
       description: Список договоров клиента
@@ -341,13 +391,25 @@ components:
        - mdmId
       properties:
         mdmId:
-          description: Mdm Id клиента
-          type: string
-          example: 123123
+          $ref: '#/components/schemas/MdmId'
         loans:
           type: array
           items:
             $ref: '#/components/schemas/Loan'
+    EmployeeLogin:
+      type: string
+      description: Логин сотрудника (табельный номер)
+      maxLength: 15
+      example: VTB9999999 or VTB9999999@vtb.ru
+    ChannelRef:
+      type: string
+      description: Канал подключения. TP-точка продаж;
+      enum:
+        - TP
+    MdmId:
+      description: Mdm Id клиента
+      type: string
+      example: 123123
     Loan:
       type: object
       description: Данные по договору
