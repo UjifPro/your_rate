@@ -304,7 +304,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoansResponse'
+                $ref: '#/components/schemas/CreateApplicationResponse'
         '400':
           description: Bad Request
           content:
@@ -374,13 +374,14 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
+        - name: applicationId
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EmployeeLoginResponse'
         '400':
           description: Bad Request
           content:
@@ -401,7 +402,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
 components:
   schemas:
     CreateApplicationRequest:
@@ -417,6 +417,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Loan'
+    CreateApplicationResponse:
+      title: CreateApplicationResponse
+      description: ID созданной заявки
+      type: object
+      properties:
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
     putApplicationById:
       description: Передача статсуса заявки
       required:
@@ -449,44 +456,6 @@ components:
       description: Логин сотрудника (табельный номер)
       maxLength: 25
       example: VTB9999999 or VTB9999999@vtb.ru
-    EmployeeLoginResponse:
-      type: object
-      description: Данные сотрудника
-      properties:
-        id:
-          description: Табельный номер ЕАСУП
-          type: string
-          example: 70008842
-        lastName:
-          description: Фамилия
-          type: string
-          maxLength: 255
-          example: Иванов
-        firstName:
-          description: Имя
-          type: string
-          maxLength: 255
-          example: Иван
-        patronymic:
-          description: Отчество
-          type: string
-          maxLength: 255
-          example: Иванович
-        birthDate:
-          description: Дата рождения
-          $ref: '#/components/schemas/Date'
-        adLogin:
-          $ref: '#/components/schemas/EmployeeLogin'
-        email:
-          description: Электронная почта
-          type: string
-          format: email
-          pattern: ^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$
-          example: PETROVII@VTB.RU
-        pointOfSale:
-          description: Код точки продаж
-          type: string
-          example: 0077
     ChannelRef:
       type: string
       description: Канал подключения. TP-точка продаж;

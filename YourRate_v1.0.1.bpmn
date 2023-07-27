@@ -403,7 +403,7 @@
         <di:waypoint x="2608" y="360" />
         <di:waypoint x="2650" y="360" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_0bfpmqx_di" bpmnElement="Activity_0rejzak">
+      <bpmndi:BPMNShape id="Activity_0bfpmqx_di" bpmnElement="Activity_0rejzak" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
         <dc:Bounds x="1760" y="309" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1u4bx6a_di" bpmnElement="Activity_01npya3" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
