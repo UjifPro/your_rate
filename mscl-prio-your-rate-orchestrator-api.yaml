@@ -247,14 +247,7 @@ components:
         - status
       properties:
         status:
-          description: Статус заявки
-          type: string
-          example: CREATED
-          enum:
-            - CREATED
-            - READY
-            - SIGNING
-            - EXECUTION
+          $ref: '#/components/schemas/ApplicationStatus'
     SessionResponse:
       description: Ответ от сесионных данных
       type: object
@@ -380,12 +373,18 @@ components:
           type: string
           example: V625/536-1234567
         applicationStatus:
-          description: Статус заявки
-          type: string
-          enum:
-            - CREATE
-            - DONE
-          example: DONE
+          $ref: '#/components/schemas/ApplicationStatus'
+    ApplicationStatus:
+      description: Статус заявки
+      type: string
+      example: CREATED
+      enum:
+        - CREATED
+        - READY
+        - SIGNING
+        - DONE
+        - EXECUTION
+        - EXECUTIONEROR
     ErrorResponse:
       title: ErrorResponse
       type: object
