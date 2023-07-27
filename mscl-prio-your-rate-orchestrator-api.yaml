@@ -361,6 +361,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /employee:
+    get:
+      tags:
+        - Process_MainProcess
+      summary: Получить данные о сотруднике
+      description: Получить данные о сотруднике в ОС Карточка сотрудника /by-login
+      operationId: getEmployeeByLogin
+      parameters:
+        - name: login
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeLoginResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CreateApplicationRequest:
@@ -406,8 +447,46 @@ components:
     EmployeeLogin:
       type: string
       description: Логин сотрудника (табельный номер)
-      maxLength: 15
+      maxLength: 25
       example: VTB9999999 or VTB9999999@vtb.ru
+    EmployeeLoginResponse:
+      type: object
+      description: Данные сотрудника
+      properties:
+        id:
+          description: Табельный номер ЕАСУП
+          type: string
+          example: 70008842
+        lastName:
+          description: Фамилия
+          type: string
+          maxLength: 255
+          example: Иванов
+        firstName:
+          description: Имя
+          type: string
+          maxLength: 255
+          example: Иван
+        patronymic:
+          description: Отчество
+          type: string
+          maxLength: 255
+          example: Иванович
+        birthDate:
+          description: Дата рождения
+          $ref: '#/components/schemas/Date'
+        adLogin:
+          $ref: '#/components/schemas/EmployeeLogin'
+        email:
+          description: Электронная почта
+          type: string
+          format: email
+          pattern: ^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$
+          example: PETROVII@VTB.RU
+        pointOfSale:
+          description: Код точки продаж
+          type: string
+          example: 0077
     ChannelRef:
       type: string
       description: Канал подключения. TP-точка продаж;
@@ -432,10 +511,7 @@ components:
           example: V625/536-1234567
         contractOpenDate:
           description: Дата открытия договора
-          type: string
-          format: date
-          example: 2023-07-21
-          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+          $ref: '#/components/schemas/Date'
         contractAmount:
           type: integer
           description: Первоначальная сумма кредита
@@ -461,6 +537,11 @@ components:
           description: Уникальный идентификатор продукта
           type: string
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
+    Date:
+      type: string
+      format: date
+      example: 2023-07-21
+      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
     LoanDetailResponse:
       type: object
       description: Данные по договору
@@ -475,16 +556,10 @@ components:
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
         yourRateActivationDate:
           description: Дата активации услуги
-          type: string
-          format: date
-          example: 2023-07-21
-          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+          $ref: '#/components/schemas/Date'
         yourRateCoolingPerionEndDate:
           description: Дата завершения периода охлаждения
-          type: string
-          format: date
-          example: 2023-08-21
-          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+          $ref: '#/components/schemas/Date'
         yourRateDiscountRate:
           description: Процент скидки
           type: integer
