@@ -239,6 +239,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /application/check/loan/{id}:
+    get:
+      tags:
+        - Process_MainProcess
+      summary: Провеяем наличие заявки по договору
+      description: Провеяем наличие заявки по договору
+      operationId: getApplicationByLoanId
+      parameters:
+        - name: loanId
+          in: path
+          required: true
+          $ref: '#/components/schemas/ContractNumber'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoansResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     putApplicationById:
@@ -369,11 +408,13 @@ components:
           type: string
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2001
         contractNumber:
-          description: Номер договора
-          type: string
-          example: V625/536-1234567
+          $ref: '#/components/schemas/ContractNumber'
         applicationStatus:
           $ref: '#/components/schemas/ApplicationStatus'
+    ContractNumber:
+      description: Номер договора
+      type: string
+      example: V625/536-1234567
     ApplicationStatus:
       description: Статус заявки
       type: string
