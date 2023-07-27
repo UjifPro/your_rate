@@ -48,7 +48,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'          
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
         '424':
@@ -56,13 +56,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
   /client/{mdmId}/loans:
     get:
       tags:
@@ -74,7 +74,8 @@ paths:
         - name: mdmId
           in: path
           required: true
-          $ref: '#/components/schemas/MdmId'
+          schema:
+            $ref: '#/components/schemas/MdmId'
       responses:
         '200':
           description: Successful operation
@@ -87,7 +88,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'          
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
         '424':
@@ -95,13 +96,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
   /client/{mdmId}/loan/detail:
     get:
       tags:
@@ -113,7 +114,8 @@ paths:
         - name: mdmId
           in: path
           required: true
-          $ref: '#/components/schemas/MdmId'
+          schema:
+            $ref: '#/components/schemas/MdmId'
         - name: publicId
           schema:
             type: string
@@ -133,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'          
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
         '424':
@@ -141,13 +143,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
   /client/{mdmId}/applications/find:
     get:
       tags:
@@ -159,7 +161,8 @@ paths:
         - name: mdmId
           in: path
           required: true
-          $ref: '#/components/schemas/MdmId'
+          schema:
+            $ref: '#/components/schemas/MdmId'
       responses:
         '200':
           description: Successful operation
@@ -172,7 +175,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'          
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
         '424':
@@ -180,7 +183,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
@@ -191,11 +194,11 @@ paths:
     put:
       tags:
         - AllProcess_UpdateStatus
-      summary: Обновлени статуса
+      summary: Обновление статуса
       description: Обновление статуса по активной заявке
       operationId: putApplicationById
       parameters:
-        - name: Id
+        - name: id
           schema:
             type: string
           in: path
@@ -238,10 +241,11 @@ paths:
       description: Провеяем наличие заявки по договору
       operationId: getApplicationByLoanId
       parameters:
-        - name: loanId
+        - name: id
           in: path
           required: true
-          $ref: '#/components/schemas/ContractNumber'
+          schema:
+            $ref: '#/components/schemas/ContractNumber'
       responses:
         '200':
           description: Successful operation
@@ -278,13 +282,15 @@ paths:
       operationId: postApplication
       parameters:
         - name: channelRef
-          in: headers
+          in: header
           required: true
-          $ref: '#/components/schemas/ChannelRef'
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
         - name: login
-          in: headers
+          in: header
           required: true
-          $ref: '#/components/schemas/EmployeeLogin'
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       requestBody:
         content:
           application/json:
@@ -328,7 +334,8 @@ paths:
         - name: id
           in: path
           required: true
-          $ref: '#/components/schemas/ApplicationId'
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
       responses:
         '200':
           description: Successful operation
@@ -379,7 +386,7 @@ components:
     SessionResponse:
       description: Ответ от сесионных данных
       type: object
-      required: 
+      required:
         - mdmId
       properties:
         mdmId:
@@ -387,8 +394,8 @@ components:
     LoansResponse:
       type: object
       description: Список договоров клиента
-      required: 
-       - mdmId
+      required:
+        - mdmId
       properties:
         mdmId:
           $ref: '#/components/schemas/MdmId'
@@ -444,7 +451,7 @@ components:
         yourRateStatus:
           description: Статус услуги Ваша низкая ставка
           type: string
-          enum: 
+          enum:
             - ACTIVE
             - DISABLED
             - SIGNING
@@ -473,28 +480,28 @@ components:
           example: 2023-07-21
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         yourRateCoolingPerionEndDate:
-          description: Дата завершения периода охлаждения 
+          description: Дата завершения периода охлаждения
           type: string
           format: date
           example: 2023-08-21
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         yourRateDiscountRate:
-          description: Процент скидки 
+          description: Процент скидки
           type: integer
           example: 10.0
         yourRateCost:
-          description: Стоимость услуги 
+          description: Стоимость услуги
           type: integer
           example: 555444.33
         yourRateRefundAmount:
-          description: Сумма возврата 
+          description: Сумма возврата
           type: integer
           example: 444333.22
     ApplicationByMdmIdResponse:
       type: array
       description: Список найденных заявок
       items:
-        $ref: '#/components/schemas/ApplicationByMdmId' 
+        $ref: '#/components/schemas/ApplicationByMdmId'
     ApplicationByMdmId:
       type: object
       required:
@@ -530,7 +537,7 @@ components:
     ErrorResponse:
       title: ErrorResponse
       type: object
-      required: 
+      required:
         - errorSourceSystem
         - frontErrorMessage
       properties:
@@ -538,7 +545,7 @@ components:
           description: Система-источник ошибки
           type: string
         frontErrorMessage:
-          description: Сообщение об ошибки для отображения на фронте          
+          description: Сообщение об ошибки для отображения на фронте
           type: string
         originalErrorCode:
           description: Код ошибки из системы-источника
