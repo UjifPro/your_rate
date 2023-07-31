@@ -36,6 +36,16 @@ paths:
           description: ID сессии
           example: b74c2d3d-989b-43be-9fcf-6feae1d53222
           required: true
+        - name: channelRef
+          description: Канал связи
+          in: header
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
@@ -72,10 +82,21 @@ paths:
       operationId: getLoansByMdmId
       parameters:
         - name: mdmId
+          description: ID клиента
           in: path
           required: true
           schema:
             $ref: '#/components/schemas/MdmId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
@@ -112,6 +133,7 @@ paths:
       operationId: getDetailLoansByMdmIdAndPublicId
       parameters:
         - name: mdmId
+          description: ID клиента
           in: path
           required: true
           schema:
@@ -120,9 +142,19 @@ paths:
           schema:
             type: string
           in: header
-          description: MDM id клиента
+          description: ID клиента(публичный)
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
           required: true
+        - name: channelRef
+          description: Канал связи
+          in: header
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
@@ -159,10 +191,21 @@ paths:
       operationId: getApplicationsByMdmId
       parameters:
         - name: mdmId
+          description: ID клиента
           in: path
           required: true
           schema:
             $ref: '#/components/schemas/MdmId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
@@ -209,7 +252,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/putApplicationById'
+              $ref: '#/components/schemas/putApplicationStatusById'
       responses:
         '201':
           description: Successful operation
@@ -233,7 +276,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /application/check/loan/{id}:
+  /application/check/{contractNumber}:
     get:
       tags:
         - Process_MainProcess
@@ -241,7 +284,8 @@ paths:
       description: Провеяем наличие заявки по договору
       operationId: getApplicationByLoanId
       parameters:
-        - name: id
+        - name: contractNumber
+          description: Номер договора
           in: path
           required: true
           schema:
@@ -252,7 +296,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoansResponse'
+                $ref: '#/components/schemas/createApplicationResponse'
         '400':
           description: Bad Request
           content:
@@ -282,11 +326,13 @@ paths:
       operationId: postApplication
       parameters:
         - name: channelRef
+          description: Канал связи
           in: header
           required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
+          description: Логин сотрудника
           in: header
           required: true
           schema:
@@ -304,7 +350,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoansResponse'
+                $ref: '#/components/schemas/createApplicationResponse'
         '400':
           description: Bad Request
           content:
@@ -324,14 +370,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /application/{id}:
-    delete:
+    get:
       tags:
         - Process_MainProcess
-      summary: Помечаем заявку на удаление
-      description: Помечаем заявку на удаление и переводим её в неактивный статус
-      operationId: deleteApplicationById
+      summary: Получить заявку
+      description: Передаём с фронта в бэк массив объектов для создания заявок
+      operationId: getApplication
       parameters:
         - name: id
+          description: ID заявки
           in: path
           required: true
           schema:
@@ -342,7 +389,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoansResponse'
+                $ref: '#/components/schemas/getApplicationResponse'
         '400':
           description: Bad Request
           content:
@@ -361,7 +408,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /employee:
+    delete:
+      tags:
+        - Process_MainProcess
+      summary: Помечаем заявку на удаление
+      description: Помечаем заявку на удаление и переводим её в неактивный статус
+      operationId: deleteApplicationById
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/employee:
     get:
       tags:
         - Process_MainProcess
@@ -369,7 +450,20 @@ paths:
       description: Получить данные о сотруднике в ОС Карточка сотрудника /by-login
       operationId: getEmployeeByLogin
       parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
         - name: login
+          description: Логин сотрудника
           in: header
           required: true
           schema:
@@ -377,10 +471,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EmployeeLoginResponse'
         '400':
           description: Bad Request
           content:
@@ -401,9 +491,183 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+  /application/{id}/barcode:
+    get:
+      tags:
+        - Process_MainProcess
+      summary: Сформировать штрих-код в Досье ФЛ
+      description: Сформировать штрих-код в Досье ФЛ по mdmId клиента
+      operationId: getBarcodeByMdmId
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: mdmId
+          description: ID клиент
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/MdmId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/client:
+    get:
+      tags:
+        - Process_MainProcess
+      summary: Получить данные по клиента
+      description: Получить данные по клиента
+      operationId: getClient
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: mdmId
+          description: ID клиент
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/MdmId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/printed-form:
+    get:
+      tags:
+        - Process_MainProcess
+      summary: Формируем ПФ по заявке
+      description: Получаем uuid готового документа
+      operationId: getPrintedForm
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: mdmId
+          description: ID клиент
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/MdmId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUuidPrintedFormResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    GetUuidPrintedFormResponse:
+      title: GetUuidPrintedFormResponse
+      description: Ответ по результату создания ПФ
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: ID сессии
+          example: b74c2d3d-989b-43be-9fcf-6feae1d53222
     CreateApplicationRequest:
       title: CreateApplicationRequest
       description: Тело запроса для создания заявки(ок)
@@ -417,7 +681,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Loan'
-    putApplicationById:
+    getApplicationResponse:
+      title: CreateApplicationResponse
+      description: ID созданной заявки
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        loans:
+          type: array
+          items:
+            $ref: '#/components/schemas/Loan'
+    createApplicationResponse:
+      title: CreateApplicationResponse
+      description: ID созданной заявки
+      type: object
+      properties:
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+    putApplicationStatusById:
       description: Передача статсуса заявки
       required:
         - status
@@ -449,47 +731,9 @@ components:
       description: Логин сотрудника (табельный номер)
       maxLength: 25
       example: VTB9999999 or VTB9999999@vtb.ru
-    EmployeeLoginResponse:
-      type: object
-      description: Данные сотрудника
-      properties:
-        id:
-          description: Табельный номер ЕАСУП
-          type: string
-          example: 70008842
-        lastName:
-          description: Фамилия
-          type: string
-          maxLength: 255
-          example: Иванов
-        firstName:
-          description: Имя
-          type: string
-          maxLength: 255
-          example: Иван
-        patronymic:
-          description: Отчество
-          type: string
-          maxLength: 255
-          example: Иванович
-        birthDate:
-          description: Дата рождения
-          $ref: '#/components/schemas/Date'
-        adLogin:
-          $ref: '#/components/schemas/EmployeeLogin'
-        email:
-          description: Электронная почта
-          type: string
-          format: email
-          pattern: ^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$
-          example: PETROVII@VTB.RU
-        pointOfSale:
-          description: Код точки продаж
-          type: string
-          example: 0077
     ChannelRef:
       type: string
-      description: Канал подключения. TP-точка продаж;
+      description: Канал подключения. TP-Канал связи;
       enum:
         - TP
     MdmId:
@@ -506,12 +750,11 @@ components:
         - publicId
       properties:
         contractNumber:
-          description: Номер договора
-          type: string
-          example: V625/536-1234567
+          $ref: '#/components/schemas/ContractNumber'
         contractOpenDate:
           description: Дата открытия договора
-          $ref: '#/components/schemas/Date'
+          allOf:
+            - $ref: '#/components/schemas/Date'
         contractAmount:
           type: integer
           description: Первоначальная сумма кредита
@@ -537,6 +780,8 @@ components:
           description: Уникальный идентификатор продукта
           type: string
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
+        properties:
+          $ref: '#/components/schemas/LoanDetailResponse'
     Date:
       type: string
       format: date
@@ -556,10 +801,12 @@ components:
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
         yourRateActivationDate:
           description: Дата активации услуги
-          $ref: '#/components/schemas/Date'
+          allOf:
+            - $ref: '#/components/schemas/Date'
         yourRateCoolingPerionEndDate:
           description: Дата завершения периода охлаждения
-          $ref: '#/components/schemas/Date'
+          allOf:
+            - $ref: '#/components/schemas/Date'
         yourRateDiscountRate:
           description: Процент скидки
           type: integer
@@ -628,4 +875,4 @@ components:
         originalErrorMessage:
           description: Текст ошибки из системы-источника
           type: string
-      description: Ошибка      
+      description: Ошибка
