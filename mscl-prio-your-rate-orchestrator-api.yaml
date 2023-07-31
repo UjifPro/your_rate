@@ -236,7 +236,7 @@ paths:
   /application/{id}/status:
     put:
       tags:
-        - AllProcess_UpdateStatus
+        - Process_AllProcess
       summary: Обновление статуса
       description: Обновление статуса по активной заявке
       operationId: putApplicationById
