@@ -511,10 +511,10 @@
       <bpmndi:BPMNShape id="BPMNShape_1mt6zhf" bpmnElement="Gateway_1bz85ba" isMarkerVisible="true">
         <dc:Bounds x="3785" y="385" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0aeztig" bpmnElement="Activity_0k4xv9c">
+      <bpmndi:BPMNShape id="BPMNShape_0aeztig" bpmnElement="Activity_0k4xv9c" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
         <dc:Bounds x="4710" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_00pirw8" bpmnElement="Activity_1q7r0n4">
+      <bpmndi:BPMNShape id="BPMNShape_00pirw8" bpmnElement="Activity_1q7r0n4" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
         <dc:Bounds x="4540" y="230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -536,10 +536,10 @@
       <bpmndi:BPMNShape id="Activity_04exall_di" bpmnElement="Activity_0evlf4b" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
         <dc:Bounds x="3860" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1yb16g9_di" bpmnElement="Activity_1hl6u6v">
+      <bpmndi:BPMNShape id="Activity_1yb16g9_di" bpmnElement="Activity_1hl6u6v" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
         <dc:Bounds x="4180" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_11bzeem_di" bpmnElement="Activity_0c9hsg5">
+      <bpmndi:BPMNShape id="Activity_11bzeem_di" bpmnElement="Activity_0c9hsg5" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
         <dc:Bounds x="4370" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_085h96b_di" bpmnElement="Activity_0z71096" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">

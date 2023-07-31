@@ -14,11 +14,30 @@ servers:
     description: Продуктивный сервер PROD
 tags:
   - name: Process_PreparingFirstScreen
-    description: Команды для лэйн Process_PreparingFirstScreen
+    description: Команды для лэйн - Подготовка первого экрана
     externalDocs:
-      description: change_me (sfera.inno.local - знания)
-      url: http://change_me
+      description: Описание процесса
+      url: http://sfera.inno.local
   - name: Event
+    description: Команды для отправки событий на фронт
+    externalDocs:
+      description: Описание процесса
+      url: http://sfera.inno.local
+  - name: Process_MainProcess
+    description: Команды для отправки событий на фронт
+    externalDocs:
+      description: Описание процесса
+      url: http://sfera.inno.local
+  - name: Process_Signing
+    description: Процесс подписания
+    externalDocs:
+      description: Описание процесса
+      url: http://sfera.inno.local
+  - name: Process_FinalStatus
+    description: Перевод заявки в финальный статус
+    externalDocs:
+      description: Описание процесса
+      url: http://sfera.inno.local
 paths:
   /client/session/{sessionId}:
     get:
@@ -213,49 +232,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApplicationByMdmIdResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not found
-        '424':
-          description: External service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /application/{id}/status:
-    put:
-      tags:
-        - Process_AllProcess
-      summary: Обновление статуса
-      description: Обновление статуса по активной заявке
-      operationId: putApplicationById
-      parameters:
-        - name: id
-          schema:
-            type: string
-          in: path
-          description: ID заявки
-          example: 0753cffe-00cb-42ee-a037-d228ab05340c
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/putApplicationStatusById'
-      responses:
-        '201':
-          description: Successful operation
         '400':
           description: Bad Request
           content:
@@ -644,6 +620,244 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/status:
+    put:
+      tags:
+        - Process_MainProcess
+      summary: Обновление статуса
+      description: Обновление статуса по активной заявке
+      operationId: putApplicationById
+      parameters:
+        - name: id
+          schema:
+            type: string
+          in: path
+          description: ID заявки
+          example: 0753cffe-00cb-42ee-a037-d228ab05340c
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/putApplicationStatusById'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/transfer-of-rights:
+    post:
+      tags:
+        - Process_Signing
+      summary: Передать права на файл в СХК
+      description: Передать права на файл в СХК
+      operationId: postTransferOfRights
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/signing:
+    post:
+      tags:
+        - Process_Signing
+      summary: Цифровое подписание
+      description: Цифровое подписание
+      operationId: postSigning
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Process_Signing
+      summary: Получение статуса цифрового подписания
+      description: Получение статуса цифрового подписания
+      operationId: getSigning
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /application/{id}/status-signing:
+    get:
+      tags:
+        - Process_Signing
+      summary: Проверить статус цифрового подписания
+      description: Проверить статус цифрового подписания
+      operationId: getStatusSigning
+      parameters:
+        - name: id
+          description: ID заявки
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationId'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
         '424':
           description: External service error
           content:
