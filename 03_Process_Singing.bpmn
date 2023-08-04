@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0abwizi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.10.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:collaboration id="Collaboration_1sm6b5j">
+    <bpmn:participant id="Participant_1p1mmnr" name="Подписание" processRef="Process_YourRate_Singing_03" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_YourRate_Singing_03" name="Process_YourRate_Singing_03" isExecutable="true">
+    <bpmn:exclusiveGateway id="Gateway_1bz85ba" default="Flow_0cncv1i">
+      <bpmn:incoming>Flow_0qpok5f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cncv1i</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1j02g2x</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1vwdzop</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="Event_0725k08">
+      <bpmn:outgoing>Flow_0qpok5f</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_0evlf4b" name="Сменить статус на SIGNING" camunda:delegateExpression="${rateSetStatus}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">SIGNING</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vwdzop</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o2gq1e</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0c9hsg5" name="Отправка документов на электронное подписание" camunda:delegateExpression="${rateDigitalSigning}">
+      <bpmn:incoming>Flow_0k744kb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nysncc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0u1vwpb" name="Отправить event во фронт" camunda:delegateExpression="${rateEventFront}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="eventType">SIGNING</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0o2gq1e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ymvegw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:receiveTask id="Activity_0k4xv9c" name="Ожидание результата электронного подписания" camunda:asyncBefore="true" camunda:asyncAfter="true" messageRef="Message_1mnnvo4">
+      <bpmn:incoming>Flow_1nysncc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fr8c76</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="Gateway_1dp79do" default="Flow_090aero">
+      <bpmn:incoming>Flow_1fr8c76</bpmn:incoming>
+      <bpmn:outgoing>Flow_090aero</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0s9oytz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1tc0cmp" sourceRef="Activity_0ego0nx" targetRef="Event_0exgbu1" />
+    <bpmn:sequenceFlow id="Flow_0cncv1i" name="Не выбран тип подписания" sourceRef="Gateway_1bz85ba" targetRef="Activity_0ego0nx" />
+    <bpmn:sequenceFlow id="Flow_0qpok5f" sourceRef="Event_0725k08" targetRef="Gateway_1bz85ba" />
+    <bpmn:sequenceFlow id="Flow_1j02g2x" name="тип подписания = paper, isSigned = true" sourceRef="Gateway_1bz85ba" targetRef="Gateway_0i3hval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable("signatureType") &amp;&amp; execution.getVariable("signatureType") == "paper" &amp;&amp; execution.hasVariable("isSigned") &amp;&amp; execution.getVariable("isSigned") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1vwdzop" name="тип подписания = paperless" sourceRef="Gateway_1bz85ba" targetRef="Activity_0evlf4b">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable("signatureType") &amp;&amp; execution.getVariable("signatureType") == "paperless"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0k744kb" sourceRef="Activity_1hl6u6v" targetRef="Activity_0c9hsg5" />
+    <bpmn:sequenceFlow id="Flow_1nysncc" sourceRef="Activity_0c9hsg5" targetRef="Activity_0k4xv9c" />
+    <bpmn:sequenceFlow id="Flow_0o2gq1e" sourceRef="Activity_0evlf4b" targetRef="Activity_0u1vwpb" />
+    <bpmn:sequenceFlow id="Flow_0ymvegw" sourceRef="Activity_0u1vwpb" targetRef="Activity_1hl6u6v" />
+    <bpmn:sequenceFlow id="Flow_0ypm6ac" sourceRef="Activity_0z71096" targetRef="Gateway_0i3hval" />
+    <bpmn:sequenceFlow id="Flow_0n3nv4b" sourceRef="Gateway_0i3hval" targetRef="Activity_19e65w3" />
+    <bpmn:sequenceFlow id="Flow_1kpy1ae" sourceRef="Activity_19e65w3" targetRef="Event_1359o0a" />
+    <bpmn:sequenceFlow id="Flow_1fr8c76" sourceRef="Activity_0k4xv9c" targetRef="Gateway_1dp79do" />
+    <bpmn:sequenceFlow id="Flow_090aero" sourceRef="Gateway_1dp79do" targetRef="Activity_0z71096" />
+    <bpmn:sequenceFlow id="Flow_0s9oytz" sourceRef="Gateway_1dp79do" targetRef="Activity_124iug3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable("signErrorCode")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ybklye" sourceRef="Activity_124iug3" targetRef="Activity_18ebijq" />
+    <bpmn:serviceTask id="Activity_1hl6u6v" name="Передать права на файл в СХК" camunda:delegateExpression="${rateGetEcmRight}">
+      <bpmn:incoming>Flow_0ymvegw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k744kb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0hxukv9" sourceRef="Activity_18ebijq" targetRef="Event_0kmvd12" />
+    <bpmn:serviceTask id="Activity_124iug3" name="Отправить event во фронт об ошибки при цифровом подписании" camunda:delegateExpression="${rateEventFront}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="eventType">ERROR</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0s9oytz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ybklye</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0z71096" name="Отправить event во фронт" camunda:delegateExpression="${rateEventFront}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="eventType">EXECUTION</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_090aero</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ypm6ac</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0kmvd12">
+      <bpmn:incoming>Flow_0hxukv9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0ego0nx" name="Отправить event с ошибкой во фронт" camunda:delegateExpression="${rateEventFront}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="eventType">ERROR</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cncv1i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tc0cmp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0i3hval">
+      <bpmn:incoming>Flow_1j02g2x</bpmn:incoming>
+      <bpmn:incoming>Flow_0ypm6ac</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n3nv4b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_19e65w3" name="Сменить статус на SIGNED" camunda:delegateExpression="${rateSetStatus}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">EXECUTION</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0n3nv4b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kpy1ae</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0exgbu1">
+      <bpmn:incoming>Flow_1tc0cmp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1359o0a" name="Отключить услугу">
+      <bpmn:incoming>Flow_1kpy1ae</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0sic6j9" messageRef="Message_3248dh0" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_18ebijq" name="Сменить статус на SIGNED_ERROR">
+      <bpmn:incoming>Flow_0ybklye</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hxukv9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_1hoevgm">
+      <bpmn:text>заявка отправлена на цифровое подписание</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0988sbg">
+      <bpmn:text>Выбран тип подписания</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0u0qh59" sourceRef="Activity_0u1vwpb" targetRef="TextAnnotation_1hoevgm" />
+    <bpmn:association id="Association_0pfnm07" sourceRef="Event_0725k08" targetRef="TextAnnotation_0988sbg" />
+    <bpmn:textAnnotation id="TextAnnotation_11q3438">
+      <bpmn:text>об ошибках при подписании</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1eh59jk" sourceRef="Activity_124iug3" targetRef="TextAnnotation_11q3438" />
+    <bpmn:textAnnotation id="TextAnnotation_19h88v1">
+      <bpmn:text>Заявка не отправлена на подписание.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1w9tadp" sourceRef="Activity_0ego0nx" targetRef="TextAnnotation_19h88v1" />
+    <bpmn:textAnnotation id="TextAnnotation_06ju1sy">
+      <bpmn:text>об успешном подписании</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0det6kr" sourceRef="Activity_0z71096" targetRef="TextAnnotation_06ju1sy" />
+    <bpmn:textAnnotation id="TextAnnotation_184iid9">
+      <bpmn:text>Вызывается процесс: Process_YourRate_Deactivation_04</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0z0orty" sourceRef="Event_1359o0a" targetRef="TextAnnotation_184iid9" />
+  </bpmn:process>
+  <bpmn:message id="Message_1mnnvo4" name="Message_DigitalSigningCallback" />
+  <bpmn:message id="Message_3248dh0" name="Message_3248dh0" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1sm6b5j">
+      <bpmndi:BPMNShape id="Participant_1p1mmnr_di" bpmnElement="Participant_1p1mmnr" isHorizontal="true">
+        <dc:Bounds x="160" y="120" width="1700" height="640" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1mt6zhf" bpmnElement="Gateway_1bz85ba" isMarkerVisible="true">
+        <dc:Bounds x="335" y="525" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1n8lm5c_di" bpmnElement="Event_0725k08">
+        <dc:Bounds x="222" y="532" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05tdr96_di" bpmnElement="Activity_0evlf4b" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="410" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u1i393_di" bpmnElement="Activity_0c9hsg5">
+        <dc:Bounds x="920" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t0nr1l_di" bpmnElement="Activity_0u1vwpb" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="580" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0aeztig" bpmnElement="Activity_0k4xv9c">
+        <dc:Bounds x="1090" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1dp79do_di" bpmnElement="Gateway_1dp79do" isMarkerVisible="true">
+        <dc:Bounds x="1245" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i3prgu_di" bpmnElement="Activity_1hl6u6v">
+        <dc:Bounds x="750" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17fy51o_di" bpmnElement="Activity_124iug3" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1330" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0notk44_di" bpmnElement="Activity_0z71096" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1330" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kmvd12_di" bpmnElement="Event_0kmvd12">
+        <dc:Bounds x="1712" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1twk83t_di" bpmnElement="Activity_0ego0nx" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1330" y="640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0bzk7za" bpmnElement="Gateway_0i3hval" isMarkerVisible="true">
+        <dc:Bounds x="1355" y="525" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pmot45_di" bpmnElement="Activity_19e65w3" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1525" y="510" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0exgbu1_di" bpmnElement="Event_0exgbu1">
+        <dc:Bounds x="1712" y="662" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1uv60c4_di" bpmnElement="Event_1359o0a">
+        <dc:Bounds x="1712" y="532" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1703" y="575" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lp51el_di" bpmnElement="Activity_18ebijq" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1525" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0mcv23h" bpmnElement="TextAnnotation_1hoevgm">
+        <dc:Bounds x="690" y="270" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0988sbg_di" bpmnElement="TextAnnotation_0988sbg">
+        <dc:Bounds x="210" y="450" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_11q3438_di" bpmnElement="TextAnnotation_11q3438">
+        <dc:Bounds x="1220" y="140" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_19h88v1_di" bpmnElement="TextAnnotation_19h88v1">
+        <dc:Bounds x="1210" y="580" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11ajwwe" bpmnElement="TextAnnotation_06ju1sy">
+        <dc:Bounds x="1450" y="330" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_184iid9_di" bpmnElement="TextAnnotation_184iid9">
+        <dc:Bounds x="1625" y="400" width="209.99351371386211" height="40.7709414381023" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1tc0cmp_di" bpmnElement="Flow_1tc0cmp">
+        <di:waypoint x="1430" y="680" />
+        <di:waypoint x="1712" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cncv1i_di" bpmnElement="Flow_0cncv1i">
+        <di:waypoint x="360" y="575" />
+        <di:waypoint x="360" y="680" />
+        <di:waypoint x="1330" y="680" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="382" y="636" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qpok5f_di" bpmnElement="Flow_0qpok5f">
+        <di:waypoint x="258" y="550" />
+        <di:waypoint x="335" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0l95rpu" bpmnElement="Flow_1j02g2x">
+        <di:waypoint x="385" y="550" />
+        <di:waypoint x="1355" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="399" y="500" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_07h4lua" bpmnElement="Flow_1vwdzop">
+        <di:waypoint x="360" y="525" />
+        <di:waypoint x="360" y="410" />
+        <di:waypoint x="410" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="305" y="379" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1abgq9d" bpmnElement="Flow_0k744kb">
+        <di:waypoint x="850" y="410" />
+        <di:waypoint x="920" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0o40g6c" bpmnElement="Flow_1nysncc">
+        <di:waypoint x="1020" y="410" />
+        <di:waypoint x="1090" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0v1q5km" bpmnElement="Flow_0o2gq1e">
+        <di:waypoint x="510" y="410" />
+        <di:waypoint x="580" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0pd7dl8" bpmnElement="Flow_0ymvegw">
+        <di:waypoint x="680" y="410" />
+        <di:waypoint x="750" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1rz3xaz" bpmnElement="Flow_0ypm6ac">
+        <di:waypoint x="1380" y="450" />
+        <di:waypoint x="1380" y="525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n3nv4b_di" bpmnElement="Flow_0n3nv4b">
+        <di:waypoint x="1405" y="550" />
+        <di:waypoint x="1525" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kpy1ae_di" bpmnElement="Flow_1kpy1ae">
+        <di:waypoint x="1625" y="550" />
+        <di:waypoint x="1712" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fr8c76_di" bpmnElement="Flow_1fr8c76">
+        <di:waypoint x="1190" y="410" />
+        <di:waypoint x="1245" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_090aero_di" bpmnElement="Flow_090aero">
+        <di:waypoint x="1295" y="410" />
+        <di:waypoint x="1330" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s9oytz_di" bpmnElement="Flow_0s9oytz">
+        <di:waypoint x="1270" y="385" />
+        <di:waypoint x="1270" y="250" />
+        <di:waypoint x="1330" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ybklye_di" bpmnElement="Flow_0ybklye">
+        <di:waypoint x="1430" y="250" />
+        <di:waypoint x="1525" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hxukv9_di" bpmnElement="Flow_0hxukv9">
+        <di:waypoint x="1625" y="250" />
+        <di:waypoint x="1712" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1hklcuv" bpmnElement="Association_0u0qh59">
+        <di:waypoint x="665" y="370" />
+        <di:waypoint x="692" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0pfnm07_di" bpmnElement="Association_0pfnm07">
+        <di:waypoint x="244" y="533" />
+        <di:waypoint x="253" y="491" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1eh59jk_di" bpmnElement="Association_1eh59jk">
+        <di:waypoint x="1335" y="212" />
+        <di:waypoint x="1314" y="195" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1w9tadp_di" bpmnElement="Association_1w9tadp">
+        <di:waypoint x="1330" y="659" />
+        <di:waypoint x="1296" y="635" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1tohyla" bpmnElement="Association_0det6kr">
+        <di:waypoint x="1430" y="383" />
+        <di:waypoint x="1452" y="371" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z0orty_di" bpmnElement="Association_0z0orty">
+        <di:waypoint x="1736" y="533" />
+        <di:waypoint x="1765" y="451" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

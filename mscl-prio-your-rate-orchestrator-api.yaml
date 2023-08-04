@@ -33,6 +33,11 @@ tags:
     externalDocs:
       description: Описание процесса
       url: http://sfera.inno.local
+  - name: Process_Deactivation
+    description: Перевод заявки в финальный статус
+    externalDocs:
+      description: Описание процесса
+      url: http://sfera.inno.local
   - name: Process_FinalStatus
     description: Перевод заявки в финальный статус
     externalDocs:
@@ -71,13 +76,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionResponse'
+                $ref: '#/components/schemas/GetSessionResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -85,13 +90,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /client/{mdmId}/loans:
     get:
       tags:
@@ -122,13 +127,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoansResponse'
+                $ref: '#/components/schemas/GetLoansResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -136,13 +141,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /client/{mdmId}/loan/detail:
     get:
       tags:
@@ -164,6 +169,11 @@ paths:
           description: ID клиента(публичный)
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
           required: true
+        - name: contractNumber
+          description: Номер договора
+          in: header
+          schema:
+            type: string
         - name: channelRef
           description: Канал связи
           in: header
@@ -180,13 +190,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoanDetailResponse'
+                $ref: '#/components/schemas/GetLoanDetailDTOResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -194,13 +204,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /client/{mdmId}/applications/find:
     get:
       tags:
@@ -231,13 +241,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationByMdmIdResponse'
+                $ref: '#/components/schemas/GetApplicationByMdmIdResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -245,13 +255,50 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
+  /event:
+    post:
+      tags:
+        - Event
+      summary: Отправляем сообщение на фронт
+      description: Отправляем сообщение на фронт
+      operationId: getEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetEventRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetEventResponses'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
   /application/check/{contractNumber}:
     get:
       tags:
@@ -266,19 +313,29 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ContractNumber'
+        - name: channelRef
+          description: Канал связи
+          in: header
+          schema:
+            $ref: '#/components/schemas/ChannelRef'
+        - name: login
+          description: Логин сотрудника
+          in: header
+          schema:
+            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/createApplicationResponse'
+                $ref: '#/components/schemas/CreateApplicationResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -286,13 +343,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application:
     post:
       tags:
@@ -304,13 +361,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       requestBody:
@@ -326,25 +381,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/createApplicationResponse'
+                $ref: '#/components/schemas/CreateApplicationResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '424':
           description: External service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}:
     get:
       tags:
@@ -365,25 +420,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getApplicationResponse'
+                $ref: '#/components/schemas/GetApplicationResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '424':
           description: External service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
     delete:
       tags:
         - Process_MainProcess
@@ -405,19 +460,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '424':
           description: External service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/employee:
     get:
       tags:
@@ -432,18 +487,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ApplicationId'
-        - name: channelRef
-          description: Канал связи
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/ChannelRef'
-        - name: login
-          description: Логин сотрудника
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/EmployeeLogin'
       responses:
         '200':
           description: Successful operation
@@ -452,7 +495,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -460,13 +503,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/barcode:
     get:
       tags:
@@ -490,13 +533,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -507,7 +548,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -515,13 +556,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/client:
     get:
       tags:
@@ -545,13 +586,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -562,24 +601,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '424':
           description: External service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/printed-form:
     get:
       tags:
         - Process_MainProcess
-      summary: Формируем ПФ по заявке
+      summary: Сформировать ПФ по заявке
       description: Получаем uuid готового документа
       operationId: getPrintedForm
       parameters:
@@ -598,13 +637,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -613,25 +650,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUuidPrintedFormResponse'
+                $ref: '#/components/schemas/GetUuidPrintedFormResponses'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '424':
           description: External service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/status:
     put:
       tags:
@@ -651,7 +688,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/putApplicationStatusById'
+              $ref: '#/components/schemas/PutApplicationStatusRequest'
       responses:
         '201':
           description: Successful operation
@@ -660,7 +697,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -668,14 +705,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /application/{id}/transfer-of-rights:
+                $ref: '#/components/schemas/ErrorResponses'
+  /application/{id}/grant-access-ecm:
     post:
       tags:
         - Process_Signing
@@ -692,13 +729,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -709,7 +744,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -717,19 +752,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
   /application/{id}/signing:
     post:
       tags:
         - Process_Signing
-      summary: Цифровое подписание
-      description: Цифровое подписание
+      summary: Отправка документов на электронное подписание
+      description: Отправка документов на электронное подписание
       operationId: postSigning
       parameters:
         - name: id
@@ -741,13 +776,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -758,7 +791,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -766,18 +799,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
     get:
       tags:
         - Process_Signing
-      summary: Получение статуса цифрового подписания
-      description: Получение статуса цифрового подписания
+      summary: Получить результат электронного подписания
+      description: Получить результат электронного подписания
       operationId: getSigning
       parameters:
         - name: id
@@ -789,13 +822,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -806,7 +837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -814,20 +845,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /application/{id}/status-signing:
-    get:
+                $ref: '#/components/schemas/ErrorResponses'
+  /application/{id}/deactivation:
+    post:
       tags:
-        - Process_Signing
-      summary: Проверить статус цифрового подписания
-      description: Проверить статус цифрового подписания
-      operationId: getStatusSigning
+        - Process_Deactivation
+      description: Отключение услуги ВНС по договору в ЦФТ
+      summary: Отключение услуги ВНС по договору в ЦФТ
+      operationId: postDeactivation
       parameters:
         - name: id
           description: ID заявки
@@ -838,13 +869,11 @@ paths:
         - name: channelRef
           description: Канал связи
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/ChannelRef'
         - name: login
           description: Логин сотрудника
           in: header
-          required: true
           schema:
             $ref: '#/components/schemas/EmployeeLogin'
       responses:
@@ -855,7 +884,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '404':
           description: Not found
         '424':
@@ -863,17 +892,82 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponses'
+  /application/{id}/notify-client:
+    post:
+      tags:
+        - Process_FinalStatus
+      description: Оповестить клиента клиента об успешном отключении услуги
+      summary: Оповестить клиента клиента об успешном отключении услуги
+      operationId: postNotifyClient
+      parameters:
+        - schema:
+            type: string
+          name: id
+          in: path
+          required: true
+          description: ID заявки
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '404':
+          description: Not found
+        '424':
+          description: External service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
 components:
   schemas:
-    GetUuidPrintedFormResponse:
-      title: GetUuidPrintedFormResponse
+    GetEventRequest:
+      title: GetEventRequest
+      type: object
+      properties:
+        mdmId:
+          $ref: '#/components/schemas/MdmId'
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+    GetEventResponses:
+      title: GetEventResponses
+      type: object
+      properties:
+        applicationDTO:
+          type: object
+          properties:
+            applicationId:
+              $ref: '#/components/schemas/ApplicationId'
+            status:
+              $ref: '#/components/schemas/ApplicationStatus'
+            loan:
+              $ref: '#/components/schemas/Loan'
+        errorDTO:
+          type: object
+          properties:
+            errorSourceSystem:
+              $ref: '#/components/schemas/ErrorSourceSystem'
+            frontErrorMessage:
+              $ref: '#/components/schemas/FrontErrorMessage'
+    GetUuidPrintedFormResponses:
+      title: GetUuidPrintedFormResponses
       description: Ответ по результату создания ПФ
       type: object
       properties:
@@ -895,8 +989,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Loan'
-    getApplicationResponse:
-      title: CreateApplicationResponse
+    GetApplicationResponses:
+      title: GetApplicationResponses
       description: ID созданной заявки
       type: object
       properties:
@@ -906,21 +1000,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Loan'
-    createApplicationResponse:
-      title: CreateApplicationResponse
+    CreateApplicationResponses:
+      title: CreateApplicationResponses
       description: ID созданной заявки
       type: object
       properties:
         applicationId:
           $ref: '#/components/schemas/ApplicationId'
-    putApplicationStatusById:
-      description: Передача статсуса заявки
+    PutApplicationStatusRequest:
+      title: PutApplicationStatusRequest
+      description: Новый статус заявки
       required:
         - status
       properties:
         status:
           $ref: '#/components/schemas/ApplicationStatus'
-    SessionResponse:
+    GetSessionResponses:
+      title: GetSessionResponses
       description: Ответ от сесионных данных
       type: object
       required:
@@ -928,7 +1024,8 @@ components:
       properties:
         mdmId:
           $ref: '#/components/schemas/MdmId'
-    LoansResponse:
+    GetLoansResponses:
+      title: GetLoansResponses
       type: object
       description: Список договоров клиента
       required:
@@ -941,20 +1038,24 @@ components:
           items:
             $ref: '#/components/schemas/Loan'
     EmployeeLogin:
+      title: EmployeeLogin
       type: string
       description: Логин сотрудника (табельный номер)
       maxLength: 25
       example: VTB9999999 or VTB9999999@vtb.ru
     ChannelRef:
+      title: ChannelRef
       type: string
       description: Канал подключения. TP-Канал связи;
       enum:
         - TP
     MdmId:
+      title: MdmId
       description: Mdm Id клиента
       type: string
       example: 123123
     Loan:
+      title: Loan
       type: object
       description: Данные по договору
       required:
@@ -995,13 +1096,24 @@ components:
           type: string
           example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2002
         properties:
-          $ref: '#/components/schemas/LoanDetailResponse'
+          $ref: '#/components/schemas/GetLoanDetailResponses'
     Date:
+      title: Date
       type: string
       format: date
       example: 2023-07-21
       pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
-    LoanDetailResponse:
+    GetLoanDetailDTOResponses:
+      title: GetLoanDetailDTOResponses
+      type: object
+      description: Детальная информация по договору
+      properties:
+        contractNumber:
+          $ref: '#/components/schemas/ContractNumber'
+        loanDetailDTO:
+          $ref: '#/components/schemas/GetLoanDetailResponses'
+    GetLoanDetailResponses:
+      title: GetLoanDetailResponses
       type: object
       description: Данные по договору
       required:
@@ -1033,12 +1145,14 @@ components:
           description: Сумма возврата
           type: integer
           example: 444333.22
-    ApplicationByMdmIdResponse:
+    GetApplicationByMdmIdResponses:
+      title: GetApplicationByMdmIdResponses
       type: array
       description: Список найденных заявок
       items:
         $ref: '#/components/schemas/ApplicationByMdmId'
     ApplicationByMdmId:
+      title: ApplicationByMdmId
       type: object
       required:
         - contractNumber
@@ -1052,14 +1166,17 @@ components:
         applicationStatus:
           $ref: '#/components/schemas/ApplicationStatus'
     ApplicationId:
+      title: ApplicationId
       description: UUID заявки
       type: string
       example: b1a23a4d-59b9-4e3e-bcc9-94a881ce2001
     ContractNumber:
+      title: ContractNumber
       description: Номер договора
       type: string
       example: V625/536-1234567
     ApplicationStatus:
+      title: ApplicationStatus
       description: Статус заявки
       type: string
       example: CREATED
@@ -1070,23 +1187,35 @@ components:
         - DONE
         - EXECUTION
         - EXECUTIONEROR
-    ErrorResponse:
-      title: ErrorResponse
+    ErrorResponses:
+      title: ErrorResponses
       type: object
       required:
         - errorSourceSystem
         - frontErrorMessage
       properties:
         errorSourceSystem:
-          description: Система-источник ошибки
-          type: string
+          $ref: '#/components/schemas/ErrorSourceSystem'
         frontErrorMessage:
-          description: Сообщение об ошибки для отображения на фронте
-          type: string
+          $ref: '#/components/schemas/FrontErrorMessage'
         originalErrorCode:
-          description: Код ошибки из системы-источника
-          type: string
+          $ref: '#/components/schemas/OriginalErrorCode'
         originalErrorMessage:
-          description: Текст ошибки из системы-источника
-          type: string
+          $ref: '#/components/schemas/OriginalErrorMessage'
       description: Ошибка
+    ErrorSourceSystem:
+      title: ErrorSourceSystem
+      description: Система-источник ошибки
+      type: string
+    FrontErrorMessage:
+      title: FrontErrorMessage
+      description: Сообщение об ошибки для отображения на фронте
+      type: string
+    OriginalErrorCode:
+      title: OriginalErrorCode
+      description: Код ошибки из системы-источника
+      type: string
+    OriginalErrorMessage:
+      title: OriginalErrorMessage
+      description: Текст ошибки из системы-источника
+      type: string
